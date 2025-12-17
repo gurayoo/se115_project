@@ -126,21 +126,66 @@ public class Main {
         }
         return count;
     }
-    public static int biggestDailySwing(int month){
+
+    public static int biggestDailySwing(int month) {
         if (month < 0 || month >= MONTHS) return -99999;
-        int maxSwing=0;
-        for(int d=0;d<DAYS-1;d++){
-            int today=0;
-            int tommorow=0;
-            for(int c=0;c<COMMS;c++){
-                today=profitData[month][d][c];
-                tommorow=profitData[month][d+1][c];
+        int maxSwing = 0;
+        for (int d = 0; d < DAYS - 1; d++) {
+            int today = 0;
+            int tommorow = 0;
+            for (int c = 0; c < COMMS; c++) {
+                today = profitData[month][d][c];
+                tommorow = profitData[month][d + 1][c];
             }
-            int swing=Math.abs(today-tommorow);
-            if(maxSwing<swing){
-                maxSwing=swing;
+            int swing = Math.abs(today - tommorow);
+            if (maxSwing < swing) {
+                maxSwing = swing;
             }
         }
         return maxSwing;
+    }
+    public static  String compareTwoCommodities(String c1, String c2) {
+        int index1 = getCommodityIndex(c1);
+        int index2 = getCommodityIndex(c2);
+        if (index1 == -1 || index2 == -1) return "INVALID_COMMODITY";
+        int total1=0;
+        int total2=0;
+        for (int m=0;m<MONTHS;m++){
+            for(int d=0;d<DAYS;d++){
+                total1 += profitData[m][d][index1];
+                total2 += profitData [m][d][index2];
+            }
+        }
+        if(total1>total2){
+            return c1 + " is better by " + (total1 - total2);
+        }
+        if (total2>total1){
+            return c2 + " is better by " + (total2 - total1);
+        }
+        return "Equal";
+    }
+    public static String bestWeekOfMonth(int month){
+        if (month < 0 || month >= MONTHS) return "INVALID_MONTH";
+        int [] weeks=new int[4];
+        for (int d=0;d<DAYS;d++){
+            int dailyTotal=0;
+            for (int c=0;c<COMMS;c++){
+                dailyTotal += profitData[month][d][c];
+            }
+            weeks[d/7]+=dailyTotal;
+        }
+        int greatestWeek=Integer.MIN_VALUE;
+        int bestWeekIndex=-1;
+        for(int w=0;w<4;w++){
+            if (weeks[w]>greatestWeek){
+                greatestWeek=weeks[w];
+                bestWeekIndex=w;
+            }
+        }
+        return "Week " + (bestWeekIndex + 1);
+    }
+    public static void main(String[] args) {
+        loadData();
+        System.out.println("Data loaded – ready for queries");
     }
 }
