@@ -71,5 +71,41 @@ public class Main {
         }
         return bestDay+1;
     }
-
+    public static String bestMonthForCommodity(String commodity){
+        int cIndex = getCommodityIndex(commodity);
+        if (cIndex == -1) return "INVALID_COMMODITY";
+        int maxProfit=Integer.MIN_VALUE;
+        int bestMonth=-1;
+        for (int m=0;m<MONTHS;m++){
+            int monthTotal=0;
+            for (int d=0;d<DAYS;d++){
+                monthTotal += profitData[m][d][cIndex];
+            }
+            if(monthTotal>maxProfit){
+                maxProfit=monthTotal;
+                bestMonth=m;
+            }
+        }
+        return months[bestMonth];
+    }
+    public static int consecutiveLossDays(String commodity){
+        int cIndex = getCommodityIndex(commodity);
+        if (cIndex == -1) return -1;
+        int maxStreak=0;
+        int currentStreak=0;
+        for(int m=0;m<MONTHS;m++){
+            for(int d=0;d<DAYS;d++) {
+                if (profitData[m][d][cIndex] < 0) {
+                    currentStreak++;
+                } else {
+                    if (currentStreak > maxStreak) {
+                        maxStreak = currentStreak;
+                    }
+                    currentStreak = 0;
+                }
+            }
+        }
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+        return maxStreak;
+    }
 }
