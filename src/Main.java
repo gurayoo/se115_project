@@ -44,57 +44,61 @@ public class Main {
         }
         return total;
     }
-    public static int commodityProfitInRange(String commodity, int fromDay, int toDay){
-     int cIndex=getCommodityIndex(commodity);
-     if (cIndex == -1 || fromDay < 1 || toDay > DAYS || fromDay > toDay) return -99999;
-     int total=0;
-     for (int m=0;m<MONTHS;m++){
-         for (int d=fromDay-1;d<toDay;d++){
-             total+=profitData[m][d][cIndex];
-         }
-     }
-     return total;
-    }
-    public static int bestDayOfMonth(int month) {
-        if (month < 0 || month >= MONTHS) return -1;
-        int maxProfit=Integer.MIN_VALUE;
-        int bestDay=-1;
-        for(int d=0;d<DAYS;d++){
-            int dayTotal=0;
-            for (int c=0;c<COMMS;c++){
-                dayTotal+=profitData[month][d][c];
-            }
-            if(dayTotal>maxProfit){
-                bestDay=d;
-                maxProfit=dayTotal;
+
+    public static int commodityProfitInRange(String commodity, int fromDay, int toDay) {
+        int cIndex = getCommodityIndex(commodity);
+        if (cIndex == -1 || fromDay < 1 || toDay > DAYS || fromDay > toDay) return -99999;
+        int total = 0;
+        for (int m = 0; m < MONTHS; m++) {
+            for (int d = fromDay - 1; d < toDay; d++) {
+                total += profitData[m][d][cIndex];
             }
         }
-        return bestDay+1;
+        return total;
     }
-    public static String bestMonthForCommodity(String commodity){
+
+    public static int bestDayOfMonth(int month) {
+        if (month < 0 || month >= MONTHS) return -1;
+        int maxProfit = Integer.MIN_VALUE;
+        int bestDay = -1;
+        for (int d = 0; d < DAYS; d++) {
+            int dayTotal = 0;
+            for (int c = 0; c < COMMS; c++) {
+                dayTotal += profitData[month][d][c];
+            }
+            if (dayTotal > maxProfit) {
+                bestDay = d;
+                maxProfit = dayTotal;
+            }
+        }
+        return bestDay + 1;
+    }
+
+    public static String bestMonthForCommodity(String commodity) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1) return "INVALID_COMMODITY";
-        int maxProfit=Integer.MIN_VALUE;
-        int bestMonth=-1;
-        for (int m=0;m<MONTHS;m++){
-            int monthTotal=0;
-            for (int d=0;d<DAYS;d++){
+        int maxProfit = Integer.MIN_VALUE;
+        int bestMonth = -1;
+        for (int m = 0; m < MONTHS; m++) {
+            int monthTotal = 0;
+            for (int d = 0; d < DAYS; d++) {
                 monthTotal += profitData[m][d][cIndex];
             }
-            if(monthTotal>maxProfit){
-                maxProfit=monthTotal;
-                bestMonth=m;
+            if (monthTotal > maxProfit) {
+                maxProfit = monthTotal;
+                bestMonth = m;
             }
         }
         return months[bestMonth];
     }
-    public static int consecutiveLossDays(String commodity){
+
+    public static int consecutiveLossDays(String commodity) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1) return -1;
-        int maxStreak=0;
-        int currentStreak=0;
-        for(int m=0;m<MONTHS;m++){
-            for(int d=0;d<DAYS;d++) {
+        int maxStreak = 0;
+        int currentStreak = 0;
+        for (int m = 0; m < MONTHS; m++) {
+            for (int d = 0; d < DAYS; d++) {
                 if (profitData[m][d][cIndex] < 0) {
                     currentStreak++;
                 } else {
@@ -107,5 +111,36 @@ public class Main {
         }
         if (currentStreak > maxStreak) maxStreak = currentStreak;
         return maxStreak;
+    }
+
+    public static int daysAboveThreshold(String commodity, int threshold) {
+        int cIndex = getCommodityIndex(commodity);
+        if (cIndex == -1) return -1;
+        int count = 0;
+        for (int m = 0; m < MONTHS; m++) {
+            for (int d = 0; d < DAYS; d++) {
+                if (profitData[m][d][cIndex] > threshold) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public static int biggestDailySwing(int month){
+        if (month < 0 || month >= MONTHS) return -99999;
+        int maxSwing=0;
+        for(int d=0;d<DAYS-1;d++){
+            int today=0;
+            int tommorow=0;
+            for(int c=0;c<COMMS;c++){
+                today=profitData[month][d][c];
+                tommorow=profitData[month][d+1][c];
+            }
+            int swing=Math.abs(today-tommorow);
+            if(maxSwing<swing){
+                maxSwing=swing;
+            }
+        }
+        return maxSwing;
     }
 }
