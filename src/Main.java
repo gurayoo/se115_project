@@ -1,3 +1,7 @@
+import java.util.*;
+import java.io.*;
+import java.nio.file.Paths;
+
 public class Main {
     static final int MONTHS = 12;
     static final int DAYS = 28;
@@ -16,6 +20,47 @@ public class Main {
         }
         return -1;
     }
+
+    public static void loadData() {
+        for (int m = 0; m < MONTHS; m++) {
+            String filePath = "Data_Files/" + months[m] + ".txt";
+            Scanner sc = null;
+
+
+            try {
+                sc = new Scanner(Paths.get(filePath));
+
+                while (sc.hasNextLine()) {
+                    String line = sc.nextLine();
+                    String[] parts = line.split(",");
+                    if (parts.length == 3) {
+                        try {
+                            int day = Integer.parseInt(parts[0].trim());
+                            String commName = parts[1].trim();
+                            int profit = Integer.parseInt(parts[2].trim());
+
+                            int dayIndex = day - 1; // 1-28 -> 0-27
+                            int commIndex = getCommodityIndex(commName);
+
+                            if (dayIndex >= 0 && dayIndex < DAYS && commIndex != -1) {
+                                profitData[m][dayIndex][commIndex] = profit;
+                            }
+                        } catch (NumberFormatException e) {
+                            e.toString();
+                        }
+                    }
+                }
+            } catch (IOException e) {
+
+            } finally {
+
+                if (sc != null) {
+                    sc.close();
+                }
+            }
+        }
+    }
+
 
     public static String mostProfitableCommodityInMonth(int month) {
         if (month < 0 || month >= MONTHS) return "INVALID_MONTH";
@@ -144,46 +189,49 @@ public class Main {
         }
         return maxSwing;
     }
-    public static  String compareTwoCommodities(String c1, String c2) {
+
+    public static String compareTwoCommodities(String c1, String c2) {
         int index1 = getCommodityIndex(c1);
         int index2 = getCommodityIndex(c2);
         if (index1 == -1 || index2 == -1) return "INVALID_COMMODITY";
-        int total1=0;
-        int total2=0;
-        for (int m=0;m<MONTHS;m++){
-            for(int d=0;d<DAYS;d++){
+        int total1 = 0;
+        int total2 = 0;
+        for (int m = 0; m < MONTHS; m++) {
+            for (int d = 0; d < DAYS; d++) {
                 total1 += profitData[m][d][index1];
-                total2 += profitData [m][d][index2];
+                total2 += profitData[m][d][index2];
             }
         }
-        if(total1>total2){
+        if (total1 > total2) {
             return c1 + " is better by " + (total1 - total2);
         }
-        if (total2>total1){
+        if (total2 > total1) {
             return c2 + " is better by " + (total2 - total1);
         }
         return "Equal";
     }
-    public static String bestWeekOfMonth(int month){
+
+    public static String bestWeekOfMonth(int month) {
         if (month < 0 || month >= MONTHS) return "INVALID_MONTH";
-        int [] weeks=new int[4];
-        for (int d=0;d<DAYS;d++){
-            int dailyTotal=0;
-            for (int c=0;c<COMMS;c++){
+        int[] weeks = new int[4];
+        for (int d = 0; d < DAYS; d++) {
+            int dailyTotal = 0;
+            for (int c = 0; c < COMMS; c++) {
                 dailyTotal += profitData[month][d][c];
             }
-            weeks[d/7]+=dailyTotal;
+            weeks[d / 7] += dailyTotal;
         }
-        int greatestWeek=Integer.MIN_VALUE;
-        int bestWeekIndex=-1;
-        for(int w=0;w<4;w++){
-            if (weeks[w]>greatestWeek){
-                greatestWeek=weeks[w];
-                bestWeekIndex=w;
+        int greatestWeek = Integer.MIN_VALUE;
+        int bestWeekIndex = -1;
+        for (int w = 0; w < 4; w++) {
+            if (weeks[w] > greatestWeek) {
+                greatestWeek = weeks[w];
+                bestWeekIndex = w;
             }
         }
         return "Week " + (bestWeekIndex + 1);
     }
+
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
