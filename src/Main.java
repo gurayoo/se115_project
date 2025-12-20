@@ -45,7 +45,7 @@ public class Main {
                                 profitData[m][dayIndex][commIndex] = profit;
                             }
                         } catch (NumberFormatException e) {
-                            e.toString();
+
                         }
                     }
                 }
@@ -178,8 +178,8 @@ public class Main {
             int today = 0;
             int tommorow = 0;
             for (int c = 0; c < COMMS; c++) {
-                today = profitData[month][d][c];
-                tommorow = profitData[month][d + 1][c];
+                today += profitData[month][d][c];
+                tommorow += profitData[month][d + 1][c];
             }
             int swing = Math.abs(today - tommorow);
             if (maxSwing < swing) {
