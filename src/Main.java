@@ -20,7 +20,7 @@ public class Main {
         }
         return -1;
     }
-
+    // Dosyalardan aylık verileri okuyup 3 boyutlu profitData dizisine yükleme.
     public static void loadData() {
         for (int m = 0; m < MONTHS; m++) {
             String filePath = "Data_Files/" + months[m] + ".txt";
@@ -29,7 +29,6 @@ public class Main {
 
             try {
                 sc = new Scanner(Paths.get(filePath));
-
                 while (sc.hasNextLine()) {
                     String line = sc.nextLine();
                     String[] parts = line.split(",");
@@ -39,7 +38,7 @@ public class Main {
                             String commName = parts[1].trim();
                             int profit = Integer.parseInt(parts[2].trim());
 
-                            int dayIndex = day - 1; // 1-28 -> 0-27
+                            int dayIndex = day - 1; // 1-28 gün aralığını 0-27 arrayine çevirme.
                             int commIndex = getCommodityIndex(commName);
 
                             if (dayIndex >= 0 && dayIndex < DAYS && commIndex != -1) {
@@ -61,7 +60,7 @@ public class Main {
         }
     }
 
-
+    // Belirtilen ayda toplam karı en yüksek olan commodity ve profit miktarını döndürme.
     public static String mostProfitableCommodityInMonth(int month) {
         if (month < 0 || month >= MONTHS) return "INVALID_MONTH";
         int maxProfit = Integer.MIN_VALUE;
@@ -79,7 +78,7 @@ public class Main {
         if (bestCommodityIndex == -1) return "No Data 0";
         return commodities[bestCommodityIndex] + " " + maxProfit;
     }
-
+    // Belirli bir ayın belirli bir günündeki tüm commoditylerin total profitini hesaplama.
     public static int totalProfitOnDay(int month, int day) {
         if (month < 0 || month >= MONTHS || day < 1 || day > DAYS) return -99999;
         int dayIndex = day - 1;
@@ -89,19 +88,19 @@ public class Main {
         }
         return total;
     }
-
+    // Tüm aylar boyunca, belirtilen gün aralığındaki toplam profiti hesaplama.
     public static int commodityProfitInRange(String commodity, int fromDay, int toDay) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1 || fromDay < 1 || toDay > DAYS || fromDay > toDay) return -99999;
         int total = 0;
-        for (int m = 0; m < MONTHS; m++) {
+        for (int m = 0; m < MONTHS; m++) {//Ay 0-11 arasında...12. ay yok!!!
             for (int d = fromDay - 1; d < toDay; d++) {
                 total += profitData[m][d][cIndex];
             }
         }
         return total;
     }
-
+    // Bir ay içerisinde toplam profitin en yüksek olduğu günü bulma.
     public static int bestDayOfMonth(int month) {
         if (month < 0 || month >= MONTHS) return -1;
         int maxProfit = Integer.MIN_VALUE;
@@ -118,7 +117,7 @@ public class Main {
         }
         return bestDay + 1;
     }
-
+    // Bir commoditynin yıllık bazda en çok kar getirdiği ayı bulma.
     public static String bestMonthForCommodity(String commodity) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1) return "INVALID_COMMODITY";
@@ -136,7 +135,7 @@ public class Main {
         }
         return months[bestMonth];
     }
-
+    // Bir commoditynin art arda zarar ettiği en uzun gün serisini hesaplama.
     public static int consecutiveLossDays(String commodity) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1) return -1;
@@ -157,7 +156,7 @@ public class Main {
         if (currentStreak > maxStreak) maxStreak = currentStreak;
         return maxStreak;
     }
-
+    // Bir commoditynin profitinin belirli bir değerin üzerinde olduğu gün sayısını sayma.
     public static int daysAboveThreshold(String commodity, int threshold) {
         int cIndex = getCommodityIndex(commodity);
         if (cIndex == -1) return -1;
@@ -171,7 +170,7 @@ public class Main {
         }
         return count;
     }
-
+    // Bir ay içindeki ardışık günler arasındaki en büyük profit changeini bulma.
     public static int biggestDailySwing(int month) {
         if (month < 0 || month >= MONTHS) return -99999;
         int maxSwing = 0;
@@ -189,7 +188,7 @@ public class Main {
         }
         return maxSwing;
     }
-
+    // İki commoditynin yıllık toplam profitlerini kıyaslar ve aradaki farkı string olarak dönme.
     public static String compareTwoCommodities(String c1, String c2) {
         int index1 = getCommodityIndex(c1);
         int index2 = getCommodityIndex(c2);
@@ -210,7 +209,7 @@ public class Main {
         }
         return "Equal";
     }
-
+    // Ayı 4 haftaya bölüp, toplam profiti en yüksek olan haftayı belirleme.
     public static String bestWeekOfMonth(int month) {
         if (month < 0 || month >= MONTHS) return "INVALID_MONTH";
         int[] weeks = new int[4];
